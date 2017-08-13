@@ -1,0 +1,242 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+li {
+    list-style: none;
+}
+
+.app {
+    width: 80%;
+    height: 100%;
+    min-height: 500px;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+    background-color: lightskyblue;
+    border: 1px solid black;
+}
+
+.app h1 {
+    font-size: 25px;
+}
+
+.to-do, .doing, .done {
+    width: 30%;
+    max-height: 100%;
+    min-height: 400px;
+    float: left;
+    overflow: hidden;
+    margin-left: 2.5%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: peachpuff;
+}
+
+.card {
+    width: 50%;
+    margin: 20px auto;
+    padding: 10px;
+    overflow: auto;
+    position: relative;
+    background-color: floralwhite;
+    border-radius: 5px;
+    max-height: 200px;
+}
+
+.card span {
+    line-height: 25px;
+    height: 25px;
+}
+
+.card-title {
+    text-align: center;
+}
+
+.card-description {
+    margin-top: 12px;
+    border-bottom: 1px dashed lightgrey;
+}
+
+.card-description-close {
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 7px solid black;
+    width: 0px;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.card-description-open {
+    border-top: 7px solid black;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    width: 0px;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.check-list {
+    margin-top: 8px;
+}
+
+.task-name {
+    padding-left: 5px;
+}
+
+.add-task {
+    width: 100% !important;
+}
+
+.check-box-not-selected {
+    margin-top: 6.5px;
+    margin-right: 5px;
+    width: 10px;
+    height: 10px;
+    float: left;
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid gray;
+}
+
+.check-box-selected {
+    margin-top: 6.5px;
+    margin-right: 5px;
+    width: 10px;
+    height: 10px;
+    float: left;
+    border-radius: 50%;
+    background-color: greenyellow;
+    border: 1px solid orange;
+}
+
+.delete-icon {
+    color: red;
+    float: right;
+}
+
+.check-list-item-enter {
+    opacity: 0;
+    transform: translateX(-100px);
+}
+
+.check-list-item-enter.check-list-item-enter-active {
+    opacity: 1;
+    transform: translateX(0px);
+    transition: all 0.5s ease-in;
+}
+
+.check-list-item-leave {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.check-list-item-leave.check-list-item-leave-active {
+    opacity: 0;
+    transform: translateX(-100px);
+    transition: all 0.5s ease-out;
+}
+
+.card-form {
+    width: 50%;
+    background-color: floralwhite;
+    max-width: 400px;
+    min-width: 300px;
+    min-height: 150px;
+    position: absolute;
+    top: 35%;
+    left: 35%;
+    z-index: 3000;
+}
+
+.close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: gray;
+}
+
+.card-form .row {
+    margin-top: 10px;
+    margin-right: 15px;
+    margin-left: 15px;
+    vertical-align: middle;
+    line-height: 22px;
+    height: 22px;
+}
+
+.card-form div:nth-child(2) {
+    margin-top: 30px;
+}
+
+.card-form .row input {
+    width: 250px;
+    float: right;
+    margin-top: 2px;
+}
+
+.card-form .row select {
+    width: 255px;
+    float: right;
+    margin-top: 2px;
+}
+
+.card-form button {
+    float: right;
+    height: 22px;
+    width: 120px;
+    border-radius: 5px;
+    background-color: red;
+    font-size: 16px;
+    text-align: center;
+    border: 0px;
+}
+
+.card-form div:last-child {
+    margin-bottom: 10px;
+}
+
+.card-form label {
+    color: dodgerblue;
+}
+
+.mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    background-color: gray;
+    opacity: 0.2;
+    z-index: 2000;
+}
+
+.add-card {
+    text-decoration: none;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    border-radius: 100%;
+    background-color: darkorange;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 30px;
+    box-shadow: 3px 5px 5px gray;
+}
+
+.edit-card {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    float: right;
+}
+
+.edit-card a {
+    text-decoration: none;
+    color: gray;
+}

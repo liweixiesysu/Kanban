@@ -1,0 +1,78 @@
+import WebSocketServer from './app/api/WebSocket';
+import http from 'http';
+import crypto from 'crypto';
+import AppController from './AppController';
+
+/**
+ * 支持WebSocket的Http Server
+ */
+class ServerWithWS extends http.Server {
+    /**
+     * 构造ServerWithWS
+     */
+    constructor() {
+        super();
+        this.appController = new AppController();
+        this.on('upgrade', (req, socket, head) => {
+            console.log(req.headers);
+
+            // 校验请求头
+            if ((!req.headers['upgrade'] || (req.headers['upgrade'].toLowerCase() !== 'websocket'))
+                || (!req.headers['connection'] || (req.headers['connection'].toLowerCase() !== 'upgrade'))
+                || (!req.headers['sec-websocket-version'] || (req.headers['sec-websocket-version'] !== '13'))
+                || !req.headers['sec-websocket-key'] || !req.headers['host']) {
+                console.error('Invalid websocket handshake!');
+                socket.write('HTTP/1.1 400 Bad Request\r\n\r\n', (error) => {
+                    if (error) {
+                        console.error('Failed to send server response!');
+                        console.error(error);
+                    }
+
+                    socket.destroy();
+                });
+
+                return;
+            }
+
+            // 计算服务端签名
+            let clientKey = req.headers['sec-websocket-key'];
+            let serverSignature = crypto.createHash('sha1').update(clientKey + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11').digest('base64');
+
+            // 设置响应头
+            let response = 'HTTP/1.1 101 Switching Protocols\r\n'
+                + `Sec-WebSocket-Accept:${serverSignature}\r\n`
+                + 'Upgrade:websocket\r\n'
+                + 'Connection:Upgrade\r\n'
+                + 'Sec-WebSocket-Proctocol:chat\r\n\r\n';
+
+            socket.write(response, (error) => {
+                if (error) {
+                    console.error('Failed to send server response!');
+                    socket.destroy();
+                    return;
+                }
+
+                // 创建WebSocketServer
+                console.log('server connected');
+                let webSocketServer = new WebSocketServer();
+                webSocketServer.onerror((error) => {
+                    console.error('WebSocket error occurs!');
+                    console.error(error);
+                });
+
+                webSocketServer.onmessage((data) => {
+                    console.log(`WebSocket message: ${data}`);
+                    this.appController.dipatcher(JSON.parse(data));
+                });
+
+                webSocketServer.onclose((error) => {
+                    console.log(error);
+                });
+
+                webSocketServer.setSocket(socket);
+            });
+        });
+    }
+}
+
+export default ServerWithWS;
