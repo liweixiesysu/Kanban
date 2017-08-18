@@ -1,32 +1,29 @@
 import React from 'react';
 import App from './components/App';
-import CardActionCreator from './actions/CardActionCreator';
-import {Container} from 'flux/utils';
-import CardStore from './stores/CardStore';
+import {connect} from 'react-redux';
+import Constants from './Constants';
+import ApiUtil from './api/ApiUtil';
 
 class AppContainer extends React.Component {
     constructor() {
         super();
-        this.state = {
-            cards:[]
-        }
     }
 
     componentDidMount() {
-        CardActionCreator.createWebSocket();
+        this.props.createWebSocket();
 
         let initialData = document.body.querySelector('#initialData');
         if (initialData && initialData.textContent) {
-            CardActionCreator.initAppContainer(JSON.parse(initialData.textContent));
+            this.props.initAppContainer(JSON.parse(initialData.textContent));
             return;
         }
 
-        CardActionCreator.fetchCards();
+        this.props.fetchCards();
     }
 
     render() {
         return (
-            <App cards={this.props.initialData ? this.props.initialData : this.state.cards} callbacks={
+            <App cards={this.props.initialData ? this.props.initialData : this.props.cards} callbacks={
                 {
                 }
             } children={this.props.children}/>
@@ -37,11 +34,45 @@ class AppContainer extends React.Component {
 AppContainer.requestInitialData = () => {
 }
 
-AppContainer.getStores = () => {return [CardStore]};
-AppContainer.calculateState = (prevState) => {
+function mapStateToProps(state, ownProps) {
     return {
-        cards: CardStore.getState()
-    }
+        cards: state.cards
+    };
 }
 
-export default Container.create(AppContainer);
+function mapDispatchToProps(dispatch, ownProps) {
+    return {
+        initAppContainer: (cards) => {
+            dispatch({
+                type: Constants.APP_CONTAINER_INIT,
+                payload: cards
+            });
+        },
+        fecthCards: () => {
+            ApiUtil.fetchCards().then((data) => {
+                dispatch({
+                    type: Constants.FETCH_CARD_SUCCESS,
+                    payload: data
+                });
+            }).catch((error) => {
+                dispatch({
+                    type: Constants.FETCH_CARD_ERROR,
+                    payload: error
+                });
+            });
+        },
+        createWebSocket: () => {
+            ApiUtil.createWebSocket().then((data) => {
+                dispatch({
+                    type: Constants.CREATE_WEBSOCKET,
+                    payload: data
+                });
+            }).catch((error) => {
+                console.log('Failed to create websocket!');
+                console.log(error);
+            });
+        }
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);

@@ -5,6 +5,8 @@ import {renderToString} from 'react-dom/server';
 import {match, RoutingContext} from 'react-router';
 import routes from './app/Routes';
 import ServerWithWS from './serverWithWS';
+import ReduxStore from './app/stores/ReduxStore';
+import {Provider} from 'react-redux';
 
 let app = express();
 app.set('views', './');
@@ -34,7 +36,9 @@ let renderRoute = (response, renderProps) => {
     let routeProps = getPropsFromRoute(renderProps, ['requestInitialData']);
     if (routeProps.requestInitialData) {
         let handleCreateElement = (Component, props) => {
-            return <Component initialData={cards}{...props}/>
+            return <Provider store={ReduxStore}>
+                <Component initialData={cards} {...props}/>
+                </Provider>
         };
 
         response.render('index', {

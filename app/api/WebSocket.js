@@ -538,11 +538,11 @@ class WebSocketServer extends events.EventEmitter {
         if (this.readyState !== 'OPEN') {
             console.error('The state of websocket is not OPEN!');
             if (callback) {
-                callback({code: 1000, message: 'The state of websocket is OPEN'});
+                callback({code: 1000, message: 'The state of websocket is not OPEN'});
                 return;
             }
 
-            this.emit("error", { code: 1000, message: 'The state of websocket is OPEN'});
+            this.emit("error", { code: 1000, message: 'The state of websocket is not OPEN'});
             return;
         }
 

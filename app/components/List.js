@@ -2,18 +2,36 @@ import React from 'react';
 import Card from './Card';
 import {DropTarget} from 'react-dnd';
 import Constants from '../Constants';
-import CardActionCreator from '../actions/CardActionCreator';
+import {connect} from 'react-redux';
 
 let spec = {
     hover(props, monitor) {
         let cardId = monitor.getItem().cardId;
-        CardActionCreator.updateCardStatus(cardId, props.className);
+        props.updateCardStatus(cardId, props.className);
     }
 }
 
 let collectDrop = (connector, monitor) => {
     return {
         connectDropTarget: connector.dropTarget()
+    }
+}
+
+let mapStateToProps = (state, ownProps) => {
+    return {};
+}
+
+let mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        updateCardStatus: (cardId, newStatus) => {
+            dispatch({
+                type: Constants.UPDATE_CARD_STATUS,
+                payload: {
+                    cardId: cardId,
+                    newStatus: newStatus
+                }
+            });
+        }
     }
 }
 
@@ -34,4 +52,4 @@ class List extends React.Component {
     }
 }
 
-export default DropTarget(Constants.CARD, spec, collectDrop)(List);
+export default connect(mapStateToProps, mapDispatchToProps)(DropTarget(Constants.CARD, spec, collectDrop)(List));

@@ -4,7 +4,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {DragSource, DropTarget} from 'react-dnd';
 import Constants from '../Constants';
 import {Link} from 'react-router';
-import CardActionCreator from '../actions/CardActionCreator';
+import {connect} from 'react-redux';
 
 let spec = {
     beginDrag(props) {
@@ -17,7 +17,7 @@ let spec = {
 let specForDrop = {
     hover(props, monitor) {
         let cardId = monitor.getItem().cardId;
-        CardActionCreator.updateCardPosition(cardId, props.cardId);
+        props.updateCardPosition(cardId, props.cardId);
     }
 }
 
@@ -30,6 +30,24 @@ let collectDrop = (connector, monitor) => {
 let collectDrag = (connector, monitor) => {
     return {
         connectDragSource: connector.dragSource()
+    }
+}
+
+let mapStateToProps = (state, ownProps) => {
+    return {};
+}
+
+let mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        updateCardPosition: (cardId, dropCardId) => {
+            dispatch({
+                type: Constants.UPDATE_CARD_POSITION,
+                payload: {
+                    cardId: cardId,
+                    dropCardId: dropCardId
+                }
+            });
+        }
     }
 }
 
@@ -68,4 +86,4 @@ class Card extends React.Component {
     }
 }
 
-export default DropTarget(Constants.CARD, specForDrop, collectDrop)(DragSource(Constants.CARD, spec, collectDrag)(Card));
+export default connect(mapStateToProps, mapDispatchToProps)(DropTarget(Constants.CARD, specForDrop, collectDrop)(DragSource(Constants.CARD, spec, collectDrag)(Card)));

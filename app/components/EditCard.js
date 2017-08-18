@@ -1,9 +1,7 @@
 import React from 'react';
 import CardForm from './CardForm';
-import CardActionCreator from '../actions/CardActionCreator';
-import {Container} from 'flux/utils';
-import DraftStore from '../stores/DraftStore';
-import WebSocketStore from '../stores/WebSocketStore';
+import {connect} from 'react-redux';
+import Constants from '../Constants';
 
 class EditCard extends React.Component {
     componentWillMount() {
@@ -13,15 +11,15 @@ class EditCard extends React.Component {
 
         let initialData = document.body.querySelector('#initialData');
         if (initialData && initialData.textContent) {
-            CardActionCreator.initAppContainer(JSON.parse(initialData.textContent));
+            this.props.initAppContainer(JSON.parse(initialData.textContent));
         }
 
         console.log(this.props.params.id)
-        CardActionCreator.createDraft(parseInt(this.props.params.id));
+        this.props.createDraft(parseInt(this.props.params.id));
     }
 
     handleChange(field, value) {
-        CardActionCreator.updateDraft(field, value);
+        this.props.updateDraft(field, value);
     }
 
     handleClose() {
@@ -29,20 +27,20 @@ class EditCard extends React.Component {
     }
 
     handleSubmit() {
-        let websocket = this.state.websocket;
+        let websocket = this.props.websocket;
         if (websocket) {
             websocket.send(JSON.stringify({
                 action: 'editCard',
-                card: this.state.card
+                card: this.props.card
             }))
         }
 
-        CardActionCreator.updateCard(this.state.card);
+        this.props.updateCard(this.props.card);
         this.props.history.pushState(null,'/');
     }
 
     render() {
-        let card = this.state.card;
+        let card = this.props.card;
         if (this.props.initialData) {
             let cardIdx = this.props.initialData.findIndex(e => e.id === parseInt(this.props.params.id));
             card = this.props.initialData[cardIdx];
@@ -58,19 +56,48 @@ class EditCard extends React.Component {
     }
 }
 
+function mapStateToProps(state, ownProps) {
+    let cardIdx = state.cards.findIndex(e => e.id === parseInt(ownProps.params.id));
+    return {
+        card: state.draft || state.cards[cardIdx],
+        websocket: state.websocket
+    };
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+    return {
+      initAppContainer: (cards) => {
+          dispatch({
+              type: Constants.APP_CONTAINER_INIT,
+              payload: cards
+          });
+      },
+        createDraft: (cardId) => {
+          dispatch({
+              type: Constants.CARETE_DRAFT,
+              payload: cardId
+          });
+        },
+        updateDraft: (field, value) => {
+          dispatch({
+              type: Constants.UPDATE_DRAFT,
+              payload: {
+                  field: field,
+                  value: value
+              }
+          });
+        },
+        updateCard: (card) => {
+          dispatch({
+              type: Constants.UPDATE_CARD,
+              payload: card
+          });
+        }
+    };
+}
+
 EditCard.requestInitialData = () => {
 
 }
 
-EditCard.getStores = () => {
-    return [DraftStore, WebSocketStore];
-}
-
-EditCard.calculateState = (prevState) => {
-    return {
-        card: DraftStore.getState(),
-        websocket: WebSocketStore.getState().websocket
-    }
-}
-
-export default Container.create(EditCard);
+export default connect(mapStateToProps, mapDispatchToProps)(EditCard);

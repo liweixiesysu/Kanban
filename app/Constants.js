@@ -12,5 +12,6 @@ export default {
     CARETE_DRAFT: 'create draft',
     UPDATE_DRAFT: 'update draft',
     UPDATE_CARD: 'update card',
-    CREATE_WEBSOCKET: 'create websocket'
+    CREATE_WEBSOCKET: 'create websocket',
+    APP_CONTAINER_INIT: 'initialize app'
 }

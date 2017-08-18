@@ -1,17 +1,19 @@
 import React from 'react';
 import ListItem from './ListItem';
-import TaskActionCreator from '../actions/TaskActionCreator';
+import {connect} from 'react-redux';
+import Constants from '../Constants';
 
 class CheckList extends React.Component {
     constructor() {
         super();
     }
+
     handleKeyPress(event) {
         if (event.key !== 'Enter') {
             return;
         }
 
-        TaskActionCreator.addTask(this.props.cardId, event.target.value);
+        this.props.addTask(this.props.cardId, event.target.value);
         event.target.value = '';
     }
 
@@ -32,4 +34,22 @@ class CheckList extends React.Component {
     }
 }
 
-export default CheckList;
+function mapStateToProps(state, ownProps) {
+    return {};
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+    return {
+        addTask: (cardId, taskName) => {
+            dispatch({
+                type: Constants.ADD_TASK,
+                payload: {
+                    cardId: cardId,
+                    taskName: taskName
+                }
+            });
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CheckList);

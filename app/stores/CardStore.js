@@ -57,12 +57,13 @@ class CardStore extends ReduceStore {
     }
 
     updateCardPosition(cardId, dropCardId) {
-        let cardIdx = this.getState().findIndex(e => e.id === cardId);
-        if (cardIdx === dropCardId) {
+        if (cardId === dropCardId) {
             return this.getState();
         }
 
+        let cardIdx = this.getState().findIndex(e => e.id === cardId);
         let newPos = this.getState().findIndex(e => e.id === dropCardId);
+
         let card = this.getState()[cardIdx];
         let newState = update(this.getState(), {
             $splice: [[cardIdx, 1], [newPos, 0, card]]

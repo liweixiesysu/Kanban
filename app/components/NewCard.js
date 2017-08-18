@@ -1,29 +1,27 @@
 import React from 'react';
 import CardForm from './CardForm';
-import CardActionCreator from '../actions/CardActionCreator';
-import {Container} from 'flux/utils';
-import DraftStore from '../stores/DraftStore';
-import WebSocketStore from '../stores/WebSocketStore';
+import {connect} from 'react-redux';
+import Constants from '../Constants';
 
 class NewCard extends React.Component {
     componentWillMount() {
-        CardActionCreator.createDraft();
+        this.props.createDraft();
     }
 
     handleChange(field, value) {
-        CardActionCreator.updateDraft(field, value);
+        this.props.updateDraft(field, value);
     }
 
     handleSubmit() {
-        let websocket = this.state.websocket;
+        let websocket = this.props.websocket;
         if (websocket) {
             websocket.send(JSON.stringify({
                 action: 'addCard',
-                card: this.state.card
+                card: this.props.card
             }));
         }
 
-        CardActionCreator.addCard(this.state.card);
+        this.props.addCard(this.props.card);
         this.props.history.pushState(null, '/');
     }
 
@@ -32,7 +30,7 @@ class NewCard extends React.Component {
     }
 
     render() {
-        return <CardForm default={this.state} callbacks={
+        return <CardForm default={this.props.card} callbacks={
             {
                 handleChange: this.handleChange.bind(this),
                 handleSubmit: this.handleSubmit.bind(this),
@@ -41,15 +39,36 @@ class NewCard extends React.Component {
     }
 }
 
-NewCard.getStores = () => {
-    return [DraftStore, WebSocketStore];
-}
-
-NewCard.calculateState = (prevState) => {
+function mapStateToProps(state, ownProps) {
     return {
-        card: DraftStore.getState(),
-        websocket: WebSocketStore.getState().websocket
+        card: state.draft || {title: '', description: '', status: 'to-do'},
+        websocket: state.websocket
     };
 }
 
-export default Container.create(NewCard);
+function mapDispatchToProps(dispatch, ownProps) {
+    return {
+        createDraft: () => {
+            dispatch({
+                type: Constants.CARETE_DRAFT
+            });
+        },
+        updateDraft: (field, value) => {
+            dispatch({
+                type: Constants.UPDATE_DRAFT,
+                payload: {
+                    field: field,
+                    value: value
+                }
+            });
+        },
+        addCard: (card) => {
+            dispatch({
+                type: Constants.ADD_CARD,
+                payload: card
+            });
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewCard);
