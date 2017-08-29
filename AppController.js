@@ -1,5 +1,5 @@
 class AppController {
-    dipatcher(req) {
+    dipatch(req) {
         switch (req.action) {
             case 'editCard': {
                 console.log('Begin to edit card...');

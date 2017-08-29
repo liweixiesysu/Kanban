@@ -2,7 +2,6 @@ import React from 'react';
 import List from './List';
 import {DragDropContext} from 'react-dnd';
 import Html5Backend from 'react-dnd-html5-backend';
-import NewCard from './NewCard';
 import {Link} from 'react-router';
 
 class App extends React.Component {

@@ -62,7 +62,7 @@ class ServerWithWS extends http.Server {
 
                 webSocketServer.onmessage((data) => {
                     console.log(`WebSocket message: ${data}`);
-                    this.appController.dipatcher(JSON.parse(data));
+                    this.appController.dipatch(JSON.parse(data));
                 });
 
                 webSocketServer.onclose((error) => {
